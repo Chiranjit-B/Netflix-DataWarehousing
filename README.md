@@ -1,5 +1,4 @@
 # 🎮 Netflix-Style Cloud Data Warehouse Project
-<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/bbe07c2b-a4e0-46c7-8e0a-1977118e0887" />
 
 > A full-scale ELT pipeline replicating how platforms like Netflix process, transform, and analyze massive user interaction data using **GCP**, **Snowflake**, and **dbt** — designed with production-level standards, automation, and data governance best practices.
 
@@ -139,50 +138,50 @@ This project follows a modular and automated ELT workflow:
 
 We applied automated data quality checks with dbt tests:
 
-* **Null Value Checks**: Ensures required fields (user\_id, movie\_id, rating) are populated
-* **Uniqueness**: Primary keys like `user_id`, `movie_id` are enforced to be unique
-* **Referential Integrity**: Ensures foreign keys match between fact and dimension tables
-* **Snapshot Validation**: Verifies new snapshot rows only appear when real tag data changes
+* **Check for Null Values**: Ensures key fields are populated (e.g., `user_id`, `rating`, `movie_id`)
+* **Unique Value Checks**: Verifies uniqueness of entity IDs (e.g., `user_id`, `movie_id`)
+* **Column-Level Relationships**: Validates proper joins between fact and dimension tables
+* **Snapshot Audits**: Confirms changes in tag history only get recorded when actual change occurs
 
-These help eliminate silent pipeline failures, improve trust, and support reliable reporting.
+These reduce data quality risks, improve confidence, and enforce integrity.
 
 ---
 
 ## 🗂️ Documentation & Logging
+<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/1106eaa5-84ac-4d67-969a-7ed6bc086b40" />
 
 ### 🗒️ Auto-Generated Documentation
 
-* `dbt docs generate` builds interactive docs
+* Used `dbt docs generate` to create browsable documentation
 * Includes:
 
-  * Table and column descriptions
-  * Data lineage and model dependencies
-  * Pass/fail status of tests
+  * Column-level descriptions
+  * Upstream/downstream model flow
+  * Test summaries and freshness metadata
 
-### 📋 Centralized Logging
+### 📋 Logging with `dbt.log`
 
-* All operations (run, test, snapshot) are logged in `dbt.log`
-* Logs assist in:
+* All `dbt run`, `dbt test`, `dbt snapshot` actions logged
+* Used for:
 
-  * Troubleshooting unexpected behavior
-  * Auditing pipeline runs for compliance
-  * Building CI/CD workflows that monitor log outputs
+  * Debugging during development
+  * Governance and audit trails
+  * CI/CD observability and pipeline failure analysis
 
 ---
 
 ## ✅ Best Practices
 
-* ✅ Used GCP–Snowflake external stage for secure, decoupled ingestion
-* ✅ Created materialized raw backups for disaster recovery (Bronze Layer)
-* ✅ Separated logic into modular layers (staging, intermediate, final)
-* ✅ Implemented SCD Type 2 for temporal tag tracking
-* ✅ Protected models using `on_schema_change: fail`
-* ✅ Ran automated tests: nulls, uniqueness, relationships
-* ✅ Documented everything via dbt docs
-* ✅ Logged everything via dbt.log for traceability and CI/CD readiness
+This project follows industry-grade engineering principles:
 
----
-
-Want to explore the models or try it out? Reach out or fork the project!
-
-🔗 GitHub: [https://github.com/Chiranjit-B/Netflix-DataWarehousing](https://github.com/Chiranjit-B/Netflix-DataWarehousing)
+* ✅ **Cloud-native pipeline**: Scalable, serverless ingestion from GCP to Snowflake
+* ✅ **Modular dbt models**: Organized by layers (staging → intermediate → marts)
+* ✅ **SCD Type 2 for change tracking**: Preserves tag history for temporal analysis
+* ✅ **Schema protection**: `on_schema_change: fail` avoids breaking changes
+* ✅ **Null, uniqueness, and relationship checks**: Catch upstream issues fast
+* ✅ **Version-controlled development**: Git integration for dbt project
+* ✅ **Auto-documentation**: Full transparency with model lineage and logic
+* ✅ **Logging and observability**: Every transformation is logged for governance
+* ✅ **Dimensional modeling**: Enables performant analytics at scale
+* ✅ **Medallion architecture**: Logical data layers ensure clarity, reusability, and control
+* ✅ **Raw backups retained**: Enables rollback, root-cause analysis, and disaster readiness
