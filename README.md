@@ -188,16 +188,6 @@ $ dbt test
 # Generate documentation
 $ dbt docs generate
 $ dbt docs serve
-```
-
----
-
-## 👀 Want to Explore More?
-
-📌 GitHub Repo: [Netflix-DataWarehousing](https://github.com/Chiranjit-B/Netflix-DataWarehousing)
-
-📎 Architecture Diagram: *Attached in repo/docs/images*
-
 ---
 
 ## 🙌 Final Thoughts
