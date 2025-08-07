@@ -1,10 +1,11 @@
 # 🎮 Netflix-Style Cloud Data Warehouse Project
+<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/74ac014a-8ec9-424f-8fa1-37854ab81cef" />
 
 > A full-scale ELT pipeline replicating how platforms like Netflix process, transform, and analyze massive user interaction data using **GCP**, **Snowflake**, and **dbt** — designed with production-level standards, automation, and data governance best practices.
 
 ---
 
-## 🎬 Introduction
+## 🎮 Introduction
 
 Ever wondered how platforms like Netflix turn billions of user interactions into data-driven content strategies?
 
@@ -29,17 +30,17 @@ This project recreates that analytics engine with a cloud-native data warehouse 
 | ☁️ Cloud Storage  | GCP Cloud Storage | Stores raw CSVs in a scalable bucket                                      |
 | ❄️ Data Warehouse | Snowflake         | Cloud-native, high-performance warehouse                                  |
 | 🔄 ELT Engine     | dbt               | Handles modeling, testing, documentation, and snapshots                   |
-| 📋 Logging        | dbt.log           | Tracks pipeline execution and errors for CI/CD compatibility              |
+| 📜 Logging        | dbt.log           | Tracks pipeline execution and errors for CI/CD compatibility              |
 | 🧪 Data Quality   | dbt Tests         | Enforces rules for null values, uniqueness, and referential relationships |
 | 📖 Documentation  | dbt Docs          | Auto-generates model lineage and descriptions for full transparency       |
 
 ---
 
-## 🧭 Architecture Overview
+## 🧱 Architecture Overview
 
 We adopted a **medallion architecture**, layered as follows:
 
-### 🤹 Bronze Layer ("As-Is" Layer)
+### 🧹 Bronze Layer ("As-Is" Layer)
 
 * Raw data ingested from GCP Cloud Storage
 * Materialized in Snowflake as backup tables for disaster recovery, auditability, and traceability
@@ -95,42 +96,77 @@ This project follows a modular and automated ELT workflow:
 
 1. **Raw Data Ingestion from GCP**
 
-   * CSVs from MovieLens datasets uploaded to a GCP bucket
-   * Acts as a centralized, cloud-native data lake
+   * MovieLens data is first uploaded to a GCP Cloud Storage bucket.
+   * These CSVs are not transformed and serve as the source of truth.
+   * Organizing data centrally in the cloud enables scalability and portability.
 
-2. **Secure External Stage Integration in Snowflake**
+2. **External Stage Integration (Secure)**
 
-   * Snowflake stage connects to GCP via `STORAGE INTEGRATION`
-   * Enables secure, governed ingestion of cloud-stored data
+   * Snowflake connects to the GCP bucket via a `STORAGE INTEGRATION` object.
+   * This enables secure, access-controlled ingestion from external cloud storage.
+   * We used `FILE_FORMAT` objects to configure how CSVs are interpreted.
 
-3. **Raw Backup Layer (Bronze)**
+3. **Bronze Layer - Raw Backup**
 
-   * All CSVs are loaded into Snowflake raw tables without transformations
-   * These act as a snapshot layer for disaster recovery, rollback, and data lineage
+   * Data is ingested **as-is** into Snowflake using raw models.
+   * This layer preserves original structure and values.
+   * Useful for auditing, disaster recovery, rollback scenarios, or reprocessing.
 
-4. **Data Transformation (Silver Layer)**
+4. **Silver Layer - Data Transformation**
 
-   * dbt `stg_` models rename columns, cast types, and standardize data
-   * Time formats, null handling, and consistent naming ensure downstream compatibility
+   * dbt staging (`stg_`) models perform standardization:
+
+     * Column names are made lowercase and snake\_case.
+     * Timestamps and numeric formats are standardized.
+     * Nulls and duplicates are handled upfront.
+   * This creates clean, consistent, and validated inputs for dimensional models.
 
 5. **Data Enrichment**
 
-   * Seed datasets (like release dates) enhance movie metadata
-   * Helps build features like post-release viewer timelines
+   * Missing values like movie release dates are patched using `seed` data.
+   * This enhances completeness and enables lifecycle-based analytics.
 
-6. **Snapshotting (SCD Type 2)**
+6. **Snapshotting with SCD Type 2**
 
-   * Tags applied by users change over time
-   * `snap_tags` snapshot model records history with `dbt snapshot` and a `timestamp` check
+   * `snap_tags` model implements snapshot logic using dbt.
+   * Tracks historical evolution of user tagging behavior over time.
+   * Allows longitudinal analysis by comparing how tags have changed.
 
-7. **Fact & Dimension Modeling (Gold Layer)**
+7. **Gold Layer - Fact & Dimensional Models**
 
-   * Final analytical models (`dim_`, `fct_`) built using business logic
-   * Used for metrics like viewer engagement, tag evolution, and genre trends
+   * Final models like `fct_ratings`, `fct_genome_scores`, and `dim_movies` are created.
+   * Built from staging data + business logic for analytical queries.
+   * These are materialized as tables for fast dashboard performance.
 
 8. **Mart Layer**
 
-   * Example: `mart_movie_releases` with derived KPIs used in reporting
+   * Example: `mart_movie_releases` is built on top of dimensions and facts.
+   * Contains derived KPIs like viewer activity post-release.
+   * Designed for consumption in BI tools.
+
+9. **Documentation Generation**
+
+   * `dbt docs generate` builds a browsable site with:
+
+     * Column-level metadata
+     * Data flow lineage
+     * Test summaries
+   * Helps onboard team members and track model evolution.
+
+10. **Logging with dbt.log**
+
+    * Every `dbt run`, `test`, `snapshot` is logged.
+    * Captures model status, errors, and timings.
+    * Crucial for debugging, CI/CD pipeline monitoring, and audits.
+
+11. **Testing & CI Readiness**
+
+    * dbt tests added for each model:
+
+      * **Not null tests**: Essential columns like IDs and timestamps
+      * **Unique tests**: Avoids duplication in identifiers
+      * **Relationship tests**: Ensures referential integrity
+    * Acts as a CI system — broken models fail early with error messages.
 
 ---
 
@@ -147,10 +183,9 @@ These reduce data quality risks, improve confidence, and enforce integrity.
 
 ---
 
-## 🗂️ Documentation & Logging
-<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/1106eaa5-84ac-4d67-969a-7ed6bc086b40" />
+## 📂 Documentation & Logging
 
-### 🗒️ Auto-Generated Documentation
+### 📒 Auto-Generated Documentation
 
 * Used `dbt docs generate` to create browsable documentation
 * Includes:
@@ -159,7 +194,7 @@ These reduce data quality risks, improve confidence, and enforce integrity.
   * Upstream/downstream model flow
   * Test summaries and freshness metadata
 
-### 📋 Logging with `dbt.log`
+### 📜 Logging with `dbt.log`
 
 * All `dbt run`, `dbt test`, `dbt snapshot` actions logged
 * Used for:
