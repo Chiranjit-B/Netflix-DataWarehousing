@@ -1,182 +1,188 @@
 # 🎮 Netflix-Style Cloud Data Warehouse Project
-<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/04798255-32f6-4a16-b8e7-e043bfe98f20" />
+<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/bbe07c2b-a4e0-46c7-8e0a-1977118e0887" />
 
 > A full-scale ELT pipeline replicating how platforms like Netflix process, transform, and analyze massive user interaction data using **GCP**, **Snowflake**, and **dbt** — designed with production-level standards, automation, and data governance best practices.
 
 ---
 
-## 🎬 Netflix-Style Data Warehouse Project
+## 🎬 Introduction
 
-Ever wondered how platforms like Netflix transform massive user data into strategic content decisions?
+Ever wondered how platforms like Netflix turn billions of user interactions into data-driven content strategies?
 
-I built a **cloud-native analytics pipeline** using **GCP Cloud Storage**, **Snowflake**, and **dbt** that mimics Netflix's core data stack — turning raw interactions into clean, governed, and business-ready insights.
+This project recreates that analytics engine with a cloud-native data warehouse built with **GCP**, **Snowflake**, and **dbt**, designed to deliver real-time insights into user engagement, content trends, and subscription behavior — all with a production-grade ELT stack.
 
 ---
 
 ## 🎯 Project Objectives
 
-* Simulate a **production-grade ELT pipeline** using cloud-native tools.
-* Enable Netflix-style **analytics use cases** (e.g., content popularity, user engagement).
-* Apply **dimensional modeling**, **medallion architecture**, and **SCD Type 2** logic.
-* Automate data testing, documentation, and CI/CD-friendly logging.
-* Showcase **best practices** in modularity, validation, and data governance.
+* Simulate a scalable Netflix-style pipeline using cloud tools
+* Load raw data from GCP to Snowflake using external stages
+* Design dimensional models to support analytics
+* Apply best practices like schema protection, SCD Type 2, and dbt testing
+* Enable visualization-ready, governed data layers
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Tool              | Purpose                                       |
-| ----------------- | --------------------------------------------- |
-| GCP Cloud Storage | Raw data storage (CSV ingestion layer)        |
-| Snowflake         | Scalable, columnar data warehouse             |
-| dbt               | ELT engine for transformation, tests, docs    |
-| dbt.log           | Tracks every model run, failure, and error    |
-| dbt docs          | Auto-generates data lineage and documentation |
+| Layer             | Tool              | Description                                                               |
+| ----------------- | ----------------- | ------------------------------------------------------------------------- |
+| ☁️ Cloud Storage  | GCP Cloud Storage | Stores raw CSVs in a scalable bucket                                      |
+| ❄️ Data Warehouse | Snowflake         | Cloud-native, high-performance warehouse                                  |
+| 🔄 ELT Engine     | dbt               | Handles modeling, testing, documentation, and snapshots                   |
+| 📋 Logging        | dbt.log           | Tracks pipeline execution and errors for CI/CD compatibility              |
+| 🧪 Data Quality   | dbt Tests         | Enforces rules for null values, uniqueness, and referential relationships |
+| 📖 Documentation  | dbt Docs          | Auto-generates model lineage and descriptions for full transparency       |
 
 ---
 
-## 🧭 Architecture Overview (Medallion Design)
+## 🧭 Architecture Overview
 
-This project adopts a **medallion architecture** with clearly separated layers:
+We adopted a **medallion architecture**, layered as follows:
 
-### 🟤 Bronze – Raw Layer
+### 🤹 Bronze Layer ("As-Is" Layer)
 
-* Data is ingested *as-is* from GCP Storage into Snowflake.
-* Materialized into raw backup tables (`MOVIELENS.RAW`) for traceability and rollback.
-* Good Practice: Ensures reproducibility and disaster recovery readiness.
+* Raw data ingested from GCP Cloud Storage
+* Materialized in Snowflake as backup tables for disaster recovery, auditability, and traceability
 
-### ⚪ Silver – Transformed Layer
+### 🥈 Silver Layer ("Transformed" Layer)
 
-* Raw data is cleaned in dbt staging models:
+* Data cleaned and standardized via dbt staging models
+* Timestamps unified, columns renamed, types cast
+* Nulls and duplicates handled
 
-  * Renamed columns (e.g., `userId → user_id`)
-  * Casted datatypes (e.g., timestamps converted)
-  * Handled NULLs and duplicates
-* Follows **standardization** and **normalization** protocols.
+### 🥇 Gold Layer ("Final BI-ready" Layer)
 
-### 🟡 Gold – Analytics Layer
-
-* Final fact and dimension models, joined in **star schema** format:
-
-  * Fact Tables: `fct_ratings`, `fct_genome_scores`
-  * Dimension Tables: `dim_movies`, `dim_users`, `dim_genome_tags`, `dim_movies_with_tags`
-* Good Practice: Modular modeling supports scalable, fast querying.
+* Dimensional star schema
+* Business logic applied (e.g. calculated fields)
+* Fact and dimension tables prepared for analytics tools
 
 ---
 
-## 📊 Business Use Cases Enabled
+## 📊 Business Use Cases
 
-* 🎯 Top-performing genres by location
-* 📅 Viewer behavior over time and post-release trends
-* 🔖 Tag relevance scoring for content profiling
-* 👤 User-level interaction and behavioral segmentation
-* 📈 Popularity trends using movie ratings and genome tag scores
+This warehouse supports:
+
+* Viewer behavior analysis post-content release
+* Genre trends segmented by location or time
+* Subscription behavior linked with engagement levels
+* Timeline analysis of user interactions
 
 ---
 
-## 🔄 ELT Workflow Breakdown
+## 🧱 Dimensional Modeling
 
-### 1️⃣ Ingestion from GCP → Snowflake
+We use a **star schema** with cleanly separated dimensions and facts:
 
-* GCP CSVs are ingested securely using a **Snowflake External Stage**.
-* dbt materializes raw models like `src_ratings`, `src_tags`, etc.
+### Dimension Tables:
 
-### 2️⃣ Cleaning in Staging Layer
+* `dim_movies`: Cleaned movie metadata
+* `dim_users`: Unique users from ratings/tags
+* `dim_genome_tags`: Processed genome tag data
+* `dim_movies_with_tags`: Ephemeral join of tags + movies
 
-* Each `src_` model (e.g., `src_movies`) is transformed in `stg_` models:
+### Fact Tables:
 
-  * Columns renamed
-  * Timestamp formats unified
-  * Invalid/missing values filtered
-* Good Practice: dbt staging keeps transformations modular and testable.
+* `fct_ratings`: Tracks user ratings
+* `fct_genome_scores`: Relevance of tags to movies
 
-### 3️⃣ Dimensional Modeling (Star Schema)
+These tables allow performant joins and business-friendly queries.
 
-* Fact models:
+---
 
-  * `fct_ratings`: Stores user→movie→rating interactions (incremental model).
-  * `fct_genome_scores`: Relevance scores between tags and movies.
-* Dimension models:
+## 🔄 Step-by-step Workflow
 
-  * `dim_movies`: Explodes genres and formats movie titles.
-  * `dim_users`: Union of distinct users from `ratings` and `tags`.
-  * `dim_genome_tags`: Cleaned list of tags from `src_genome_tags`.
-  * `dim_movies_with_tags`: Ephemeral join model for exploration.
+This project follows a modular and automated ELT workflow:
 
-### 4️⃣ Historical Change Tracking – SCD Type 2
+1. **Raw Data Ingestion from GCP**
 
-* Snapshot model (`snap_tags.sql`) tracks changes in user-tag behavior over time.
-* Good Practice: Enables temporal comparisons and longitudinal analysis.
+   * CSVs from MovieLens datasets uploaded to a GCP bucket
+   * Acts as a centralized, cloud-native data lake
 
-### 5️⃣ Enrichment with Seed Data
+2. **Secure External Stage Integration in Snowflake**
 
-* Added release dates from a `seed_movie_release_dates` file to enhance insights around timing and engagement.
+   * Snowflake stage connects to GCP via `STORAGE INTEGRATION`
+   * Enables secure, governed ingestion of cloud-stored data
+
+3. **Raw Backup Layer (Bronze)**
+
+   * All CSVs are loaded into Snowflake raw tables without transformations
+   * These act as a snapshot layer for disaster recovery, rollback, and data lineage
+
+4. **Data Transformation (Silver Layer)**
+
+   * dbt `stg_` models rename columns, cast types, and standardize data
+   * Time formats, null handling, and consistent naming ensure downstream compatibility
+
+5. **Data Enrichment**
+
+   * Seed datasets (like release dates) enhance movie metadata
+   * Helps build features like post-release viewer timelines
+
+6. **Snapshotting (SCD Type 2)**
+
+   * Tags applied by users change over time
+   * `snap_tags` snapshot model records history with `dbt snapshot` and a `timestamp` check
+
+7. **Fact & Dimension Modeling (Gold Layer)**
+
+   * Final analytical models (`dim_`, `fct_`) built using business logic
+   * Used for metrics like viewer engagement, tag evolution, and genre trends
+
+8. **Mart Layer**
+
+   * Example: `mart_movie_releases` with derived KPIs used in reporting
 
 ---
 
 ## 🧪 Testing & Validation
 
-dbt **data tests** were implemented to enforce data integrity:
+We applied automated data quality checks with dbt tests:
 
-✅ No nulls in required fields
-✅ Unique primary keys
-✅ Column-level relationships (e.g., `movie_id` exists across related tables)
+* **Null Value Checks**: Ensures required fields (user\_id, movie\_id, rating) are populated
+* **Uniqueness**: Primary keys like `user_id`, `movie_id` are enforced to be unique
+* **Referential Integrity**: Ensures foreign keys match between fact and dimension tables
+* **Snapshot Validation**: Verifies new snapshot rows only appear when real tag data changes
 
----
-
-## 📚 Documentation & Logging
-
-### 🗂️ Documentation
-
-* Used `dbt docs generate` to create **interactive lineage docs**.
-* Covers source → staging → models → tests.
-
-### 🪵 Logging
-
-* All transformation runs and test outputs are recorded in `dbt.log`.
-* Useful for debugging, governance audits, and CI/CD pipelines.
+These help eliminate silent pipeline failures, improve trust, and support reliable reporting.
 
 ---
 
-## ✅ Best Practices Implemented
+## 🗂️ Documentation & Logging
 
-| Practice                         | Why It Matters                                              |
-| -------------------------------- | ----------------------------------------------------------- |
-| External Stage Integration       | Secure, scalable GCP-to-Snowflake pipeline                  |
-| Raw Backup Materialization       | Ensures rollback in case of transformation errors           |
-| Standardization in Staging Layer | Simplifies joins, enhances data consistency                 |
-| SCD Type 2 Snapshots             | Tracks user behavior change history                         |
-| Schema Change Protection         | `on_schema_change: fail` to catch accidental column updates |
-| Modular Star Schema              | Optimizes BI performance, simplifies query logic            |
-| dbt Testing                      | Data quality assurance                                      |
-| dbt Logging                      | Enables observability and operational tracking              |
-| Seed Enrichment                  | Enhances data completeness using external curated values    |
-| Auto-Documentation               | Reduces onboarding time, improves stakeholder understanding |
+### 🗒️ Auto-Generated Documentation
+
+* `dbt docs generate` builds interactive docs
+* Includes:
+
+  * Table and column descriptions
+  * Data lineage and model dependencies
+  * Pass/fail status of tests
+
+### 📋 Centralized Logging
+
+* All operations (run, test, snapshot) are logged in `dbt.log`
+* Logs assist in:
+
+  * Troubleshooting unexpected behavior
+  * Auditing pipeline runs for compliance
+  * Building CI/CD workflows that monitor log outputs
 
 ---
 
-## 🤮 Source-to-Model Mapping (Facts and Dimensions)
+## ✅ Best Practices
 
-### Raw Sources (Bronze Layer)
+* ✅ Used GCP–Snowflake external stage for secure, decoupled ingestion
+* ✅ Created materialized raw backups for disaster recovery (Bronze Layer)
+* ✅ Separated logic into modular layers (staging, intermediate, final)
+* ✅ Implemented SCD Type 2 for temporal tag tracking
+* ✅ Protected models using `on_schema_change: fail`
+* ✅ Ran automated tests: nulls, uniqueness, relationships
+* ✅ Documented everything via dbt docs
+* ✅ Logged everything via dbt.log for traceability and CI/CD readiness
 
-* `src_movies`, `src_ratings`, `src_genome_scores`, `src_genome_tags`, `src_tags`, `src_links`
+---
 
-### Transformations (Silver Layer)
+Want to explore the models or try it out? Reach out or fork the project!
 
-* Each `src_` table was converted to a `stg_` model:
-
-  * Clean column names
-  * Convert timestamps
-  * Cast data types
-  * Remove NULLs, duplicates
-
-### Dimension and Fact Models (Gold Layer)
-
-| Final Model            | Source Tables Used               | Description                                                  |
-| ---------------------- | -------------------------------- | ------------------------------------------------------------ |
-| `dim_movies`           | `stg_movies`                     | Cleans movie names, extracts genres, prepares for fact joins |
-| `dim_genome_tags`      | `stg_genome_tags`                | Formats tag names                                            |
-| `dim_users`            | `stg_ratings` + `stg_tags`       | Unique users from all interaction sources                    |
-| `fct_ratings`          | `stg_ratings`                    | User ratings fact table (incremental load)                   |
-| `fct_genome_scores`    | `stg_genome_scores`              | Tag relevance scores for movies                              |
-| `dim_movies_with_tags` | `stg_movies` + `stg_genome_tags` | Ephemeral join layer for exploration                         |
+🔗 GitHub: [https://github.com/Chiranjit-B/Netflix-DataWarehousing](https://github.com/Chiranjit-B/Netflix-DataWarehousing)
