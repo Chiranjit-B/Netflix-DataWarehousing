@@ -1,5 +1,6 @@
 # 🎮 Netflix-Style Cloud Data Warehouse Project
-<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/74ac014a-8ec9-424f-8fa1-37854ab81cef" />
+<img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/0586c109-1e9f-4fa0-95cf-362abed2d9ff" />
+
 
 > A full-scale ELT pipeline replicating how platforms like Netflix process, transform, and analyze massive user interaction data using **GCP**, **Snowflake**, and **dbt** — designed with production-level standards, automation, and data governance best practices.
 
