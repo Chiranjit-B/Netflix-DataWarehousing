@@ -1,4 +1,4 @@
-# 🎮 Netflix-Style Cloud Data Warehouse Project
+# 🎮 Netflix Cloud Data Warehouse And Analysis Project
 ![Project Badge](https://img.shields.io/badge/Project-Streaming%20Content%20Analytics-brightgreen)
 ![Cloud Badge](https://img.shields.io/badge/Cloud-GCP%20Cloud%20Storage-blue)
 ![Data Warehouse Badge](https://img.shields.io/badge/Data%20Warehouse-Snowflake-lightblue)
