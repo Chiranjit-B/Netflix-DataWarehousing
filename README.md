@@ -1,4 +1,16 @@
 # 🎮 Netflix-Style Cloud Data Warehouse Project
+![Project Badge](https://img.shields.io/badge/Project-Streaming%20Content%20Analytics-brightgreen)
+![Cloud Badge](https://img.shields.io/badge/Cloud-GCP%20Cloud%20Storage-blue)
+![Data Warehouse Badge](https://img.shields.io/badge/Data%20Warehouse-Snowflake-lightblue)
+![Transformation Badge](https://img.shields.io/badge/Transformation-dbt-orange)
+![ETL Badge](https://img.shields.io/badge/ETL%20Automation-Python-yellow)
+![SCD Badge](https://img.shields.io/badge/Data%20Modeling-SCD%20Type%202-red)
+![SQL Badge](https://img.shields.io/badge/Querying-BigQuery%20SQL%20%7C%20AWS%20Athena-yellowgreen)
+![Visualization Badge](https://img.shields.io/badge/Dashboarding-Tableau-ff69b4)
+![Dataset Badge](https://img.shields.io/badge/Data-5M%2B%20Records-lightgrey)
+![Domain Badge](https://img.shields.io/badge/Domain-Streaming%20Platform%20Analytics-purple)
+
+
 <img width="1431" height="546" alt="netflix-snowflake-dbt" src="https://github.com/user-attachments/assets/0586c109-1e9f-4fa0-95cf-362abed2d9ff" />
 
 
